@@ -1,4 +1,3 @@
-
 # CALMY AI - BACKEND
 This document contains the backend of the calmy AI
 
@@ -22,21 +21,21 @@ This document contains the backend of the calmy AI
 2️⃣ How The Backend Will Work
 Data Collection (from wearable APIs & user inputs)
 
-Heart Rate Variability (HRV)
+- Heart Rate Variability (HRV)
 
-Skin Temperature
+- Skin Temperature
 
-Voice Input (optional)
+- Voice Input (optional)
 
-User Feedback (stress levels, fatigue symptoms)
+- User Feedback (stress levels, fatigue symptoms)
 
-Preprocessing & Analysis
+- Preprocessing & Analysis
 
-Normalize heart rate & skin temp data
+- Normalize heart rate & skin temp data
 
-Extract voice features using Librosa
+- Extract voice features using Librosa
 
-Run AI models for stress & fatigue detection
+- Run AI models for stress & fatigue detection
 
 AI Model Processing
 
@@ -81,10 +80,10 @@ For voice processing, we’ll test with:
 Librosa + Pretrained NLP models for tone analysis
 
 4️⃣ Step-by-Step Backend Development Plan
-✅ Step 1: Set Up Flask Backend (Create project structure)
-✅ Step 2: Build API Endpoints (/analyze, /recommendations)
-✅ Step 3: Integrate AI Models (LSTM for HRV, CNN for voice)
-✅ Step 4: Test API with Sample Data (Postman, Swagger)
-✅ Step 5: Connect to PostgreSQL Database
-✅ Step 6: Deploy on Render/AWS
+Step 1: Set Up Flask Backend (Create project structure)
+Step 2: Build API Endpoints (/analyze, /recommendations)
+Step 3: Integrate AI Models (LSTM for HRV, CNN for voice)
+Step 4: Test API with Sample Data (Postman, Swagger)
+Step 5: Connect to PostgreSQL Database
+Step 6: Deploy on Render
 
