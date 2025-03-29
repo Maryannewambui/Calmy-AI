@@ -8,10 +8,6 @@ from werkzeug.utils import secure_filename
 from voice_analysis import predict_voice_stress
 from temperature_analysis import predict_temp_stress
 
-
-
-
-
 # Initialize Flask App
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
