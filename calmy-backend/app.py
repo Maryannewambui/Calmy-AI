@@ -97,7 +97,63 @@ def predict_temp():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-    
+@app.route("/predict-combined-stress", methods=["POST"])
+def predict_combined_stress():
+    try:
+        # Get JSON data
+        data = request.form
+
+        # Extract HRV data
+        hrv_sequence = data.get("hrv")
+        if isinstance(hrv_sequence, str):  # Convert only if needed
+            hrv_sequence = list(map(float, hrv_sequence.split(",")))
+            if len(hrv_sequence) != 10:
+                return jsonify({"error": "Invalid HRV data. Provide exactly 10 values."}), 400
+            hrv_stress = predict_stress(hrv_sequence)
+        else:
+            hrv_stress = None  # No HRV input
+
+        # Extract Temperature data
+        temp_value = data.get("temperature")
+        if temp_value:
+            temp_value = float(temp_value)
+            temp_stress = predict_temp_stress(temp_value)
+        else:
+            temp_stress = None  # No temperature input
+
+        # Extract and Process Voice Data
+        if "audio" in request.files:
+            audio = request.files["audio"]
+            if audio.filename == '':
+                return jsonify({"error": "No selected audio file"}), 400
+
+            filename = secure_filename(audio.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            audio.save(file_path)
+
+            voice_stress = predict_voice_stress(file_path)
+        else:
+            voice_stress = None  # No voice input
+
+        # Combine Stress Levels (Weighted Average)
+        stress_scores = [s for s in [hrv_stress, temp_stress, voice_stress] if s is not None]
+        
+        if not stress_scores:
+            return jsonify({"error": "No valid stress data provided."}), 400
+
+        combined_stress = sum(stress_scores) / len(stress_scores)  # Average of available stress levels
+
+        return jsonify({
+            "hrv_stress": hrv_stress,
+            "voice_stress": voice_stress,
+            "temp_stress": temp_stress,
+            "combined_stress": round(float(combined_stress), 2)  # Round for readability
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # Run Server
 if __name__ == "__main__":
     app.run(debug=True)

@@ -41,7 +41,7 @@ def train_hrv_model():
     # Save model & scaler
     model.save("hrv_model.h5")
     joblib.dump(scaler, "scaler.pkl")
-    print("✅ Model & Scaler Saved!")
+    print("Model & Scaler Saved!")
 
 # Load Model & Make Predictions
 def predict_stress(hrv_sequence):
@@ -57,6 +57,9 @@ def predict_stress(hrv_sequence):
     # Predict stress level
     stress_level = model.predict(hrv_sequence)[0][0]
     return float(stress_level)  # Output between 0-1 (low to high stress)
+
+def predict_hrv_stress(hrv_value):
+    return predict_stress([hrv_value] * 10)
 
 # Train Model (Run once)
 if __name__ == "__main__":
