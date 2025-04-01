@@ -16,7 +16,7 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
 # Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL", "sqlite:///stress.db")
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://calmy_ai_user:0HmXuHMizmxCCESzJzdy26QMIFvVl598@dpg-cvlqrvh5pdvs73fcqt30-a.oregon-postgres.render.com/calmy_ai"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = "uploads"
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
