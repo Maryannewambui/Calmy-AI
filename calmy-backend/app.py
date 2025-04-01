@@ -9,6 +9,7 @@ from werkzeug.utils import secure_filename
 from voice_analysis import predict_voice_stress
 from temperature_analysis import predict_temp_stress
 from model import db, User, HealthData, init_db
+from flask_migrate import Migrate
 
 # Initialize Flask App
 app = Flask(__name__)
@@ -20,6 +21,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = "uploads"
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY", "supersecret")
+
+migrate = Migrate(app, db)
 
 # Initialize Database & JWT
 db.init_app(app)
