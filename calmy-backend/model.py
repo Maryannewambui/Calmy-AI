@@ -1,5 +1,7 @@
-from app import db
 from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()  # Move db here
 
 # User Model
 class User(db.Model):
@@ -7,6 +9,8 @@ class User(db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
+
+    health_data = db.relationship('HealthData', backref='user', lazy=True)
 
 # Health Data Model
 class HealthData(db.Model):
@@ -21,5 +25,7 @@ class HealthData(db.Model):
     fatigue_level = db.Column(db.Float, nullable=True)
 
 # Create Tables
-def init_db():
-    db.create_all()
+def init_db(app):
+    with app.app_context():  # Ensure the app context is pushed
+        db.create_all()  # Initialize with Flask app
+    

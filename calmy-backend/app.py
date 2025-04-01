@@ -1,32 +1,101 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 import os
+from werkzeug.security import generate_password_hash, check_password_hash
 from ai_model import predict_stress
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from voice_analysis import predict_voice_stress
 from temperature_analysis import predict_temp_stress
+from model import db, User, HealthData, init_db
 
 # Initialize Flask App
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
 # Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL", "postgresql://user:password@localhost/stress_db")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL", "sqlite:///stress.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = "uploads"
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY", "supersecret")
 
 # Initialize Database & JWT
-db = SQLAlchemy(app)
+db.init_app(app)
 jwt = JWTManager(app)
+
+# Create tables
+init_db(app)
+
 
 # Default Route
 @app.route("/")
 def home():
     return jsonify({"message": "Calmy AI"})
+
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.get_json()  # Get data from request
+    
+    # Validate incoming data
+    username = data.get("username")
+    email = data.get("email")
+    password = data.get("password")
+    
+    if not username or not email or not password:
+        return jsonify({"error": "Missing required fields"}), 400
+    
+    # Check if the user already exists
+    user = User.query.filter_by(email=email).first()
+    if user:
+        return jsonify({"error": "User already exists"}), 400
+    
+    # Hash the password
+    hashed_password = generate_password_hash(password)
+    
+    # Create a new user instance
+    new_user = User(username=username, email=email, password=hashed_password)
+    
+    # Add to database
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+        print(f"New user added: {new_user.username}")
+        # Create JWT Token
+        access_token = create_access_token(identity=new_user.id)  # JWT token with user ID
+        
+        return jsonify({
+            "message": "User registered successfully",
+            "access_token": access_token  # Send the token for subsequent requests
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+# Login Route
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    
+    email = data.get("email")
+    password = data.get("password")
+    
+    if not email or not password:
+        return jsonify({"error": "Missing required fields"}), 400
+    
+    user = User.query.filter_by(email=email).first()
+    if not user or not check_password_hash(user.password, password):
+        return jsonify({"error": "Invalid credentials"}), 401
+    
+    # Generate a JWT token for the logged-in user
+    access_token = create_access_token(identity=user.id)
+    
+    return jsonify({
+        "message": "Login successful",
+        "access_token": access_token  # The token for subsequent requests
+    }), 200
+
 
 # Predict Stress from HRV
 @app.route("/predict-stress", methods=["POST"])
@@ -97,6 +166,34 @@ def predict_temp():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Fetch User's Health Data
+@app.route("/health-data", methods=["GET"])
+@jwt_required()  # Protect this route, only accessible if the user is authenticated
+def get_health_data():
+    user_id = get_jwt_identity()  # Get user ID from the JWT token
+    print(f"User ID: {user_id}")
+    health_data = HealthData.query.filter_by(user_id=user_id).all()
+    
+    # If the user has no health data
+    if not health_data:
+        return jsonify({"message": "No health data found"}), 404
+    
+    # Return health data
+    return jsonify({
+        "health_data": [
+            {
+                "timestamp": data.timestamp,
+                "heart_rate": data.heart_rate,
+                "hrv": data.hrv,
+                "skin_temperature": data.skin_temperature,
+                "voice_analysis": data.voice_analysis,
+                "stress_level": data.stress_level,
+                "fatigue_level": data.fatigue_level
+            }
+            for data in health_data
+        ]
+    }), 200
+
 @app.route("/predict-combined-stress", methods=["POST"])
 def predict_combined_stress():
     try:
@@ -144,10 +241,10 @@ def predict_combined_stress():
         combined_stress = sum(stress_scores) / len(stress_scores)  # Average of available stress levels
 
         return jsonify({
-            "hrv_stress": hrv_stress,
-            "voice_stress": voice_stress,
-            "temp_stress": temp_stress,
-            "combined_stress": round(float(combined_stress), 2)  # Round for readability
+            "hrv_stress": float(hrv_stress) if hrv_stress is not None else None,
+            "voice_stress": float(voice_stress) if voice_stress is not None else None,
+            "temp_stress": float(temp_stress) if temp_stress is not None else None,
+            "combined_stress": round(float(combined_stress), 2)
         })
 
     except Exception as e:
