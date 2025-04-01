@@ -87,3 +87,8 @@ Step 4: Test API with Sample Data (Postman, Swagger)
 Step 5: Connect to PostgreSQL Database
 Step 6: Deploy on Render
 
+
+# RENDER Deplpoyed link
+https://calmy-ai.onrender.com
+
+
