@@ -131,7 +131,7 @@ const Login = () => {
           </button>
         </form>
         <p style={{ textAlign: 'center', marginTop: '15px', color: '#555', fontSize: '14px' }}></p>
-          Don't have an account? <a href="/register" style={{ color: '#007BFF', textDecoration: 'none' }}>Sign up</a>
+          Don't have an account? <a href="/signup" style={{ color: '#007BFF', textDecoration: 'none' }}>Sign up</a>
         
       </div>
         </div>
