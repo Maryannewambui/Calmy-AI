@@ -13,7 +13,7 @@ from flask_migrate import Migrate
 
 # Initialize Flask App
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app, resources={r"/*": {"origins": ["http://127.0.0.1:5173", "https://https://calmy-ai-rho.vercel.app"]}})  # Enable CORS for specific frontend origin
 
 # Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://calmy_ai_user:0HmXuHMizmxCCESzJzdy26QMIFvVl598@dpg-cvlqrvh5pdvs73fcqt30-a.oregon-postgres.render.com/calmy_ai"
