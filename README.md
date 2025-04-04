@@ -1,11 +1,11 @@
 # calmy ai
 
 # --- links ----
-Backend - https://calmy-ai.onrender.com
+* **Backend - https://calmy-ai.onrender.com**
 
-Frontend - 
+* **Frontend - https://calmy-ai-rho.vercel.app/**
 
-Pitch Deck - https://www.canva.com/design/DAGi1WVdDlw/w0HL51bR8OTezKFYqZRQ1A/edit?utm_content=DAGi1WVdDlw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+* **Pitch Deck - https://www.canva.com/design/DAGi1WVdDlw/w0HL51bR8OTezKFYqZRQ1A/edit?utm_content=DAGi1WVdDlw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton**
 
 
 # PROBLEM

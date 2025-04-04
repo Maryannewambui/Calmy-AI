@@ -30,6 +30,9 @@ const Hero = () => {
         <h2 className="text-center font-medium italic text-lg text-blue-800">
           "Your Personalized Stress & Fatigue Management Companion"
         </h2>
+        <h3 className="text-center font-medium italic text-lg text-black-800">
+          Head to tester to get started
+        </h3>
       </motion.div>
     </div>
   );
