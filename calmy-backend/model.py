@@ -5,12 +5,12 @@ db = SQLAlchemy()  # Move db here
 
 # User Model
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)  # Ensure primary key is set
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
 
-    health_data = db.relationship('HealthData', backref='user', lazy=True)
+    health_data = db.relationship('HealthData', backref='user', lazy=True)  # Ensure relationship is defined
 
 # Health Data Model
 class HealthData(db.Model):
@@ -27,5 +27,6 @@ class HealthData(db.Model):
 # Create Tables
 def init_db(app):
     with app.app_context():  # Ensure the app context is pushed
-        db.create_all()  # Initialize with Flask app
-    
+        db.create_all()  # Create all tables
+        print("Database tables created successfully.")  # Debugging log
+

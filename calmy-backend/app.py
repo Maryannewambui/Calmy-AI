@@ -40,41 +40,45 @@ def home():
 @app.route("/register", methods=["POST"])
 def register():
     data = request.get_json()  # Get data from request
-    
+
     # Validate incoming data
     username = data.get("username")
     email = data.get("email")
     password = data.get("password")
-    
+
     if not username or not email or not password:
         return jsonify({"error": "Missing required fields"}), 400
-    
+
     # Check if the user already exists
     user = User.query.filter_by(email=email).first()
     if user:
         return jsonify({"error": "User already exists"}), 400
-    
+
     # Hash the password
     hashed_password = generate_password_hash(password)
-    
+
     # Create a new user instance
     new_user = User(username=username, email=email, password=hashed_password)
-    
+
     # Add to database
     try:
         db.session.add(new_user)
-        db.session.commit()
-        print(f"New user added: {new_user.username}")
+        db.session.commit()  # Commit the transaction
+        print(f"New user added: {new_user.username}")  # Debugging log
+        print(f"User ID: {new_user.id}")  # Confirm the user ID is generated
+
         # Create JWT Token
         access_token = create_access_token(identity=new_user.id)  # JWT token with user ID
-        
+
         return jsonify({
             "message": "User registered successfully",
             "access_token": access_token  # Send the token for subsequent requests
         }), 201
     except Exception as e:
-        db.session.rollback()
+        db.session.rollback()  # Rollback in case of error
+        print(f"Error during registration: {str(e)}")  # Debugging log
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
 
 # Login Route
 @app.route("/login", methods=["POST"])
