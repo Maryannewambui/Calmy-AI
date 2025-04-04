@@ -3,7 +3,7 @@
 # --- links ----
 * **Backend - https://calmy-ai.onrender.com**
 
-* **Frontend - https://calmy-ai-rho.vercel.app/**
+* **Frontend - https://calmy-ai-rho.vercel.app**
 
 * **Pitch Deck - https://www.canva.com/design/DAGi1WVdDlw/w0HL51bR8OTezKFYqZRQ1A/edit?utm_content=DAGi1WVdDlw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton**
 
@@ -44,10 +44,32 @@ For a web application like Athena AI, a robust and scalable tech stack is crucia
 # ## Project Structure
 
 calmy-ai/
-├── frontend/
-│   └──  
+├── frontend/calmy_ai/
+├── index.html
+├── vite.config.js
+├── tailwind.config.js
+├── vercel.json
+├── postcss.config.cjs
+├── package.json
+├── .gitignore
+├── eslint.config.js
+├── README.md
+├── dist/ (ignored in .gitignore)
+├── src/
+│   ├── App.jsx
+│   ├── App.css
+│   ├── main.jsx
+│   ├── index.css
+│   ├── components/
+│   │   ├── Home.jsx
+│   │   ├── Hero.jsx
+│   │   ├── Tester.jsx
+│   │   ├── Signup.jsx
+│   │   ├── Login.jsx
+│   ├── assets/
+│   │   └── banner.jpg 
 | 
-├── backend/
+├── backend/calmy-backend
 │   ├──  calmy-backend/
 │   ├──  .gitignore
 │   ├──  ai_model.py
